@@ -44,7 +44,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: structure-test
     entrypoint: 'bash'
-    args: ["-c", '. /workspace/cloudbuild.sh;docker run gcr.io/gcp-runtimes/container-structure-test:latest test --image $$COMPONENT_DOCKERREPO:$$IMAGE_TAG --config cst/config.yaml']
+    args: ["-c", '. /workspace/cloudbuild.sh;docker run gcr.io/gcp-runtimes/container-structure-test:latest test --image $$COMPONENT_DOCKERREPO:$$IMAGE_TAG --config /workspace/cst/config.yaml']
     env:
       - 'DOCKER_CONFIG=/workspace/docker-config'
 
