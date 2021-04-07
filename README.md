@@ -24,3 +24,9 @@ The database in the above example will be accessible on port 9876.
 - Password: postgres
 - Database: postgres
 - Schema: dm
+
+## Container Structure TEsts
+The image also has a minimal [container-structure-test](https://github.com/GoogleContainerTools/container-structure-test) setup.
+
+This is run as part of the cloud build, and can also be run locally on MacOS/Linux/WSL:
+`container-structure-test test --image=quay.io/ortelius/test-database:latest --config=cst/config.yaml`

@@ -32,12 +32,24 @@ steps:
     env:
       - 'DOCKER_CONFIG=/workspace/docker-config'
 
-  # Build and push deployhub-webadmin.war - quay.io/ortelius/ortelius
+  # Build the test-database image
   - name: 'gcr.io/cloud-builders/docker'
-    id: build_push
+    id: build
+    entrypoint: 'bash'
+    args: ["-c", '. /workspace/cloudbuild.sh;docker build --tag $$COMPONENT_DOCKERREPO:$$IMAGE_TAG --tag $$COMPONENT_DOCKERREPO:latest -f /workspace/Dockerfile']
+    env:
+      - 'DOCKER_CONFIG=/workspace/docker-config'
+
+  # Run the container-structure-tests
+  - name: 'gcr.io/gcp-runtimes/container-structure-test'
+    args: ['test', '--image', '$$COMPONENT_DOCKERREPO:$$IMAGE_TAG', '--config', 'cst/config.yaml']
+
+  # Push the test-database image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: push
     waitFor: [ 'login' ]
     entrypoint: 'bash'
-    args: ["-c", '. /workspace/cloudbuild.sh;docker build --tag $$COMPONENT_DOCKERREPO:$$IMAGE_TAG --tag $$COMPONENT_DOCKERREPO:latest -f /workspace/Dockerfile .;docker push $$COMPONENT_DOCKERREPO:$$IMAGE_TAG;docker push $$COMPONENT_DOCKERREPO:latest']
+    args: ["-c", '. /workspace/cloudbuild.sh;docker push $$COMPONENT_DOCKERREPO:$$IMAGE_TAG;docker push $$COMPONENT_DOCKERREPO:latest']
     env:
       - 'DOCKER_CONFIG=/workspace/docker-config'
 

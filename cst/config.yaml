@@ -1,0 +1,17 @@
+
+schemaVersion: "2.0.0"
+
+metadataTest:
+  env:
+    - key: POSTGRES_PASSWORD 
+      value: postgres
+    - key: POSTGRES_USER
+      value: postgres
+    - key: POSTGRES_DB
+      value: postgres
+
+fileExistenceTests:
+- name: 'Check dm.sql exists'
+  path: '/docker-entrypoint-initdb.d/dm.sql'
+  shouldExist: true
+  permissions: '-rwxrwxrwx'
