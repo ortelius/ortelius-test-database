@@ -36,7 +36,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: build
     entrypoint: 'bash'
-    args: ["-c", '. /workspace/cloudbuild.sh;docker build --tag $$COMPONENT_DOCKERREPO:$$IMAGE_TAG --tag $$COMPONENT_DOCKERREPO:latest -f /workspace/Dockerfile']
+    args: ["-c", '. /workspace/cloudbuild.sh;docker build --tag $$COMPONENT_DOCKERREPO:$$IMAGE_TAG --tag $$COMPONENT_DOCKERREPO:latest -f /workspace/Dockerfile .']
     env:
       - 'DOCKER_CONFIG=/workspace/docker-config'
 
