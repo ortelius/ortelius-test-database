@@ -43,11 +43,7 @@ steps:
   # Run the container-structure-tests
   - name: 'gcr.io/gcp-runtimes/container-structure-test'
     id: structure-test
-    args: ['test', '--image', '$COMPONENT_DOCKERREPO:$IMAGE_TAG', '--config', 'cst/config.yaml']
-    env: 
-      - 'COMPONENT_VERSION=9.0.0'
-      - 'COMPONENT_DOCKERREPO=quay.io/ortelius/test-database'
-      - 'IMAGE_TAG="$BRANCH_NAME-v$$COMPONENT_VERSION.$$(git rev-list --count $BRANCH_NAME)-g$SHORT_SHA"'
+    args: ['test', '--image', '${_COMPONENT_DOCKERREPO}:${_IMAGE_TAG}', '--config', 'cst/config.yaml']
 
   # Push the test-database image
   - name: 'gcr.io/cloud-builders/docker'
@@ -56,6 +52,10 @@ steps:
     args: ["-c", '. /workspace/cloudbuild.sh;docker push $$COMPONENT_DOCKERREPO:$$IMAGE_TAG;docker push $$COMPONENT_DOCKERREPO:latest']
     env:
       - 'DOCKER_CONFIG=/workspace/docker-config'
+
+substitutions:
+    '_COMPONENT_DOCKERREPO=quay.io/ortelius/test-database'
+    '_IMAGE_TAG="$BRANCH_NAME-v9.0.0.$$(git rev-list --count $BRANCH_NAME)-g$SHORT_SHA"'
 
 secrets:
 - kmsKeyName: projects/eighth-physics-169321/locations/global/keyRings/cli/cryptoKeys/quay
