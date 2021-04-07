@@ -44,7 +44,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: structure-test
     entrypoint: 'bash'
-    args: ["-c", '. /workspace/cloudbuild.sh;docker run -v /workspace:/workspace gcr.io/gcp-runtimes/container-structure-test:latest test --image $$COMPONENT_DOCKERREPO:$$IMAGE_TAG --config /workspace/cst/config.yaml']
+    args: ["-c", '. /workspace/cloudbuild.sh;curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64;chmod 777 ./container-structure-test-linux-amd64;./container-structure-test-linux-amd64 test --image $$COMPONENT_DOCKERREPO:$$IMAGE_TAG --config /workspace/cst/config.yaml']
     env:
       - 'DOCKER_CONFIG=/workspace/docker-config'
 
