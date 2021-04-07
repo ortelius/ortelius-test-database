@@ -42,12 +42,12 @@ steps:
 
   # Run the container-structure-tests
   - name: 'gcr.io/gcp-runtimes/container-structure-test'
+    id: structure-test
     args: ['test', '--image', '$$COMPONENT_DOCKERREPO:$$IMAGE_TAG', '--config', 'cst/config.yaml']
 
   # Push the test-database image
   - name: 'gcr.io/cloud-builders/docker'
     id: push
-    waitFor: [ 'login' ]
     entrypoint: 'bash'
     args: ["-c", '. /workspace/cloudbuild.sh;docker push $$COMPONENT_DOCKERREPO:$$IMAGE_TAG;docker push $$COMPONENT_DOCKERREPO:latest']
     env:
