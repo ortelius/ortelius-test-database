@@ -43,7 +43,7 @@ steps:
   # Run the container-structure-tests
   - name: 'gcr.io/gcp-runtimes/container-structure-test'
     id: structure-test
-    args: ['test', '--image', '$$COMPONENT_DOCKERREPO:$$IMAGE_TAG', '--config', 'cst/config.yaml']
+    args: ['test', '--image', '$COMPONENT_DOCKERREPO:$IMAGE_TAG', '--config', 'cst/config.yaml']
     env: 
       - 'COMPONENT_VERSION=9.0.0'
       - 'COMPONENT_DOCKERREPO=quay.io/ortelius/test-database'
