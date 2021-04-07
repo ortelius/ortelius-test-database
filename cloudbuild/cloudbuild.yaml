@@ -11,7 +11,7 @@ steps:
   - name: gcr.io/cloud-builders/docker
     id: cloudbuild_sh
     entrypoint: 'bash'
-    args: ['-c', 'ls -A1 | xargs rm -rf;git clone $$COMPONENT_GITURL .;git checkout --track -b $BRANCH_NAME origin/$BRANCH_NAME;env | sed "s/^/export /" >> /workspace/cloudbuild.sh']
+    args: ['-c', 'ls -A1 | xargs rm -rf;git clone $$COMPONENT_GITURL .;git checkout --track -b $BRANCH_NAME origin/$BRANCH_NAME;env | sed "s/^/export /" >> /workspace/cloudbuild.sh;env > /workspace/env.txt']
     volumes:
     - name: 'ssh'
       path: /root/.ssh
@@ -41,9 +41,12 @@ steps:
       - 'DOCKER_CONFIG=/workspace/docker-config'
 
   # Run the container-structure-tests
-  - name: 'gcr.io/gcp-runtimes/container-structure-test'
+  - name: 'gcr.io/cloud-builders/docker'
     id: structure-test
-    args: ['test', '--image', '${_COMPONENT_DOCKERREPO}:${_IMAGE_TAG}', '--config', 'cst/config.yaml']
+    entrypoint: 'bash'
+    args: ["-c", '. /workspace/cloudbuild.sh;docker run gcr.io/gcp-runtimes/container-structure-test:latest test --image $$COMPONENT_DOCKERREPO:$$IMAGE_TAG --config cst/config.yaml']
+    env:
+      - 'DOCKER_CONFIG=/workspace/docker-config'
 
   # Push the test-database image
   - name: 'gcr.io/cloud-builders/docker'
@@ -52,10 +55,6 @@ steps:
     args: ["-c", '. /workspace/cloudbuild.sh;docker push $$COMPONENT_DOCKERREPO:$$IMAGE_TAG;docker push $$COMPONENT_DOCKERREPO:latest']
     env:
       - 'DOCKER_CONFIG=/workspace/docker-config'
-
-substitutions:
-    '_COMPONENT_DOCKERREPO=quay.io/ortelius/test-database'
-    '_IMAGE_TAG="$BRANCH_NAME-v9.0.0.$$(git rev-list --count $BRANCH_NAME)-g$SHORT_SHA"'
 
 secrets:
 - kmsKeyName: projects/eighth-physics-169321/locations/global/keyRings/cli/cryptoKeys/quay
